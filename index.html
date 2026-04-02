@@ -1,106 +1,104 @@
 <!DOCTYPE html><html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nova Music Ultra</title>
+<title>Nova Music Ultra X</title>
 <script src="https://www.youtube.com/iframe_api"></script><style>
 :root{--green:#1db954;--bg:#0b0b0b;--card:#181818;--text:#fff;--sub:#9aa0a6}
-body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
+body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text);transition:0.5s}
 
-/* HEADER */
 .header{display:flex;align-items:center;gap:10px;padding:18px 20px;font-weight:700}
-.logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#1db954,#00ffc6);display:flex;align-items:center;justify-content:center;color:#000}
+.logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,#1db954,#00ffc6);display:flex;align-items:center;justify-content:center;color:#000}
 
-.search{padding:0 15px 10px}
-.search input{width:100%;padding:14px;border-radius:30px;border:none;background:#202020;color:white;outline:none}
+.search{padding:0 15px}
+.search input{width:100%;padding:14px;border-radius:30px;border:none;background:#202020;color:white}
 
-.section-title{padding:10px 15px;font-size:14px;color:#bbb}
-
+.section-title{padding:10px 15px;color:#bbb}
 .grid{display:flex;gap:12px;overflow-x:auto;padding:10px}
-.card{min-width:140px;background:var(--card);border-radius:18px;overflow:hidden;cursor:pointer;transition:0.25s}
-.card:hover{transform:scale(1.05)}
+.card{min-width:140px;background:var(--card);border-radius:18px;overflow:hidden;cursor:pointer}
 .card img{width:100%;height:120px;object-fit:cover}
 .info{padding:8px}
 .title{font-size:12px}
 .artist{font-size:10px;color:var(--sub)}
 
-/* PLAYER */
-.player{
- position:fixed;bottom:10px;left:10px;right:10px;
- background:rgba(30,30,30,0.7);
- backdrop-filter:blur(25px);
- border-radius:25px;padding:14px;
- display:flex;align-items:center;gap:12px;
- box-shadow:0 10px 40px rgba(0,0,0,0.6);
-}
-
-.player img{width:54px;height:54px;border-radius:14px}
+.player{position:fixed;bottom:10px;left:10px;right:10px;background:rgba(30,30,30,0.6);backdrop-filter:blur(30px);border-radius:28px;padding:14px;display:flex;gap:12px;align-items:center}
+.player img{width:56px;height:56px;border-radius:16px}
 .player-info{flex:1}
-.player-title{font-size:13px}
-.player-artist{font-size:11px;color:var(--sub)}
-
-.controls{display:flex;align-items:center;gap:10px}
-
+.controls{display:flex;gap:10px}
 .small-btn,.main-btn{display:flex;align-items:center;justify-content:center;border-radius:50%;cursor:pointer}
 .small-btn{width:34px;height:34px;background:#2a2a2a}
-.main-btn{width:52px;height:52px;background:var(--green)}
+.main-btn{width:54px;height:54px;background:var(--green)}
 
 .small-prev::before{content:'';border-right:10px solid white;border-top:6px solid transparent;border-bottom:6px solid transparent}
 .small-next::before{content:'';border-left:10px solid white;border-top:6px solid transparent;border-bottom:6px solid transparent}
+.main-btn.play::before{content:'';border-left:16px solid black;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.main-btn.pause::before{content:'';width:6px;height:18px;background:black;box-shadow:10px 0 0 black;border-radius:3px}
 
-.main-btn.play::before{content:'';border-left:14px solid black;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:4px}
-.main-btn.pause::before{content:'';width:6px;height:16px;background:black;box-shadow:10px 0 0 black;border-radius:3px}
-
-.progress{width:100%;height:4px;background:#333;border-radius:10px;overflow:hidden;margin-top:6px}
+.progress{width:100%;height:4px;background:#333;border-radius:10px;margin-top:6px;overflow:hidden;cursor:pointer}
 .bar{height:100%;width:0%;background:var(--green)}
 .time{display:flex;justify-content:space-between;font-size:10px;color:var(--sub)}
 
+/* FULLSCREEN */
+.full{
+ position:fixed;top:0;left:0;right:0;bottom:0;
+ background:rgba(0,0,0,0.95);
+ display:none;flex-direction:column;align-items:center;justify-content:center;
+ text-align:center;padding:20px
+}
+.full img{width:70%;border-radius:20px;margin-bottom:20px}
+.full-title{font-size:18px;margin-bottom:5px}
+.full-artist{color:#aaa;font-size:13px;margin-bottom:20px}
+
 #player{display:none}
-</style></head><body><div class="header"><div class="logo">N</div>Nova Music</div><div class="search"><input id="search" placeholder="Search music..." oninput="debounceSearch()"></div><div class="section-title">Top Play</div>
-<div class="grid" id="top"></div><div class="section-title">Recently Played</div>
-<div class="grid" id="recent"></div><div class="section-title">Search Result</div>
-<div class="grid" id="results"></div><div class="player" id="playerUI" style="display:none">
+</style></head><body><div class="header"><div class="logo">N</div>Nova Music</div>
+<div class="search"><input id="search" placeholder="Search..." oninput="debounceSearch()"></div><div class="section-title">Recently Played</div>
+<div class="grid" id="recent"></div><div class="section-title">Search</div>
+<div class="grid" id="results"></div><div class="player" id="playerUI" onclick="openFull()">
 <img id="cover">
 <div class="player-info">
-<div class="player-title" id="title"></div>
-<div class="player-artist" id="artist"></div>
-<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="title"></div>
+<div class="artist" id="artist"></div>
+<div class="progress" onclick="seek(event)"><div class="bar" id="bar"></div></div>
 <div class="time"><span id="current">0:00</span><span id="duration">0:00</span></div>
 </div>
 <div class="controls">
-<div class="small-btn small-prev" onclick="prev()"></div>
-<div class="main-btn play" id="playBtn" onclick="toggle()"></div>
-<div class="small-btn small-next" onclick="next()"></div>
+<div class="small-btn small-prev" onclick="prev();event.stopPropagation()"></div>
+<div class="main-btn play" id="playBtn" onclick="toggle();event.stopPropagation()"></div>
+<div class="small-btn small-next" onclick="next();event.stopPropagation()"></div>
 </div>
+</div><div class="full" id="full">
+<img id="fcover">
+<div class="full-title" id="ftitle"></div>
+<div class="full-artist" id="fartist"></div>
+<div class="main-btn" onclick="toggle()"></div>
 </div><div id="player"></div><script>
 const API_KEY="AIzaSyAZ-yES2YmYiLlSCztEVP4mFO6vPFGdZTM";
-let player,playlist=[],current=0,playing=false,interval;
+let player,playlist=[],currentIndex=0,playing=false,interval;
 let recentList=JSON.parse(localStorage.getItem('recent'))||[];
 
 function onYouTubeIframeAPIReady(){
- player=new YT.Player('player',{height:'0',width:'0',events:{onStateChange:onStateChange}});
+ player=new YT.Player('player',{height:'0',width:'0',events:{onStateChange:e=>{if(e.data===0)next()}}});
  loadRecent();
 }
 
 function play(id,title,thumb,channel){
  playlist.push({id,title,thumb,channel});
- current=playlist.length-1;
-
- // save recent
+ currentIndex=playlist.length-1;
  recentList.unshift({id,title,thumb,channel});
  recentList=recentList.slice(0,10);
  localStorage.setItem('recent',JSON.stringify(recentList));
  loadRecent();
-
  load();
 }
 
 function load(){
- let s=playlist[current];
+ let s=playlist[currentIndex];
  player.loadVideoById(s.id);
  title.innerText=s.title;
  artist.innerText=s.channel;
  cover.src=s.thumb;
- playerUI.style.display='flex';
+ fcover.src=s.thumb;
+ ftitle.innerText=s.title;
+ fartist.innerText=s.channel;
  playBtn.className='main-btn pause';
  playing=true;
  startProgress();
@@ -111,10 +109,8 @@ function toggle(){
  else{player.playVideo();playing=true;playBtn.className='main-btn pause'}
 }
 
-function next(){if(current<playlist.length-1){current++;load();}}
-function prev(){if(current>0){current--;load();}}
-
-function onStateChange(e){if(e.data===0){next()}}
+function next(){if(currentIndex<playlist.length-1){currentIndex++;load()}}
+function prev(){if(currentIndex>0){currentIndex--;load()}}
 
 function startProgress(){
  clearInterval(interval);
@@ -123,14 +119,22 @@ function startProgress(){
  let cur=player.getCurrentTime();
  let dur=player.getDuration();
  if(!dur)return;
-
  bar.style.width=(cur/dur)*100+'%';
-
  let f=t=>Math.floor(t/60)+":"+(Math.floor(t%60)<10?'0':'')+Math.floor(t%60);
- current.innerText=f(cur);
- duration.innerText=f(dur);
+ document.getElementById('current').innerText=f(cur);
+ document.getElementById('duration').innerText=f(dur);
  },500);
 }
+
+function seek(e){
+ let rect=e.currentTarget.getBoundingClientRect();
+ let percent=(e.clientX-rect.left)/rect.width;
+ let dur=player.getDuration();
+ player.seekTo(dur*percent,true);
+}
+
+function openFull(){full.style.display='flex'}
+full.onclick=()=>full.style.display='none';
 
 function loadRecent(){
  let html='';
