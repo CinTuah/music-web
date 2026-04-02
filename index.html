@@ -1,185 +1,214 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nova Music Pro</title>
+<title>Nova Music Ultra</title><style>
+:root{
+  --green:#1db954;
+  --bg:#121212;
+  --card:#1e1e1e;
+  --text:#ffffff;
+  --sub:#b3b3b3;
+}
 
-<style>
-:root{--green:#1db954}
-body{margin:0;font-family:Arial;background:#121212;color:#fff}
+body{
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-/* HEADER */
 .header{
- display:flex;align-items:center;gap:10px;
- padding:15px;font-size:20px;font-weight:bold
-}
-.logo{
- width:36px;height:36px;border-radius:50%;
- background:linear-gradient(45deg,#1db954,#00ffc6);
- display:flex;align-items:center;justify-content:center
+  padding:20px;
+  font-size:22px;
+  font-weight:600;
 }
 
-/* SEARCH */
-.search{padding:10px}
+.search{
+  padding:0 15px 15px;
+}
+
 .search input{
- width:100%;padding:12px;border-radius:25px;
- border:none;background:#1e1e1e;color:#fff
+  width:100%;
+  padding:14px;
+  border-radius:30px;
+  border:none;
+  background:var(--card);
+  color:white;
+  font-size:14px;
 }
 
-/* SONG LIST */
-.song{
- display:flex;align-items:center;gap:10px;
- padding:10px;border-radius:10px;cursor:pointer
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  padding:10px;
 }
-.song:hover{background:#1e1e1e}
-.song img{width:55px;height:55px;border-radius:8px}
-.info{flex:1}
-.title{font-size:14px}
-.artist{font-size:11px;color:#aaa}
-.play{color:var(--green);font-size:18px}
 
-/* PLAYER */
+.card{
+  background:var(--card);
+  border-radius:12px;
+  overflow:hidden;
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+}
+
+.card .info{
+  padding:8px;
+}
+
+.card .title{
+  font-size:13px;
+}
+
+.card .artist{
+  font-size:11px;
+  color:var(--sub);
+}
+
+/* FLOAT PLAYER */
 .player{
- position:fixed;bottom:0;width:100%;
- background:#181818;padding:10px;
- border-top:1px solid #333
+  position:fixed;
+  bottom:10px;
+  left:10px;
+  right:10px;
+  background:rgba(30,30,30,0.95);
+  backdrop-filter:blur(10px);
+  border-radius:16px;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-.now{font-size:12px;text-align:center}
+
+.player img{
+  width:50px;
+  height:50px;
+  border-radius:10px;
+}
+
+.player-info{
+  flex:1;
+}
+
+.player-title{
+  font-size:13px;
+}
+
+.player-artist{
+  font-size:11px;
+  color:var(--sub);
+}
 
 .controls{
- display:flex;justify-content:center;
- gap:20px;margin-top:5px;font-size:20px
+  display:flex;
+  gap:10px;
 }
-.btn{cursor:pointer}
 
-.loader{text-align:center;padding:20px;color:#aaa}
+.btn{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:var(--green);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:black;
+  font-weight:bold;
+  cursor:pointer;
+}
+
 iframe{display:none}
-</style>
-</head>
 
-<body>
-
-<div class="header">
-<div class="logo">N</div>
-Nova Music Pro
-</div>
-
-<div class="search">
-<input type="text" id="search" placeholder="Search song..." oninput="debounceSearch()">
-</div>
-
-<div id="results"></div>
-
-<div class="player">
-<div class="now" id="nowPlaying">Not playing</div>
-
-<div class="controls">
-<span class="btn" onclick="prev()">⏮</span>
-<span class="btn" onclick="toggle()">⏯</span>
-<span class="btn" onclick="next()">⏭</span>
-</div>
-
-<iframe id="player"></iframe>
-</div>
-
-<script>
-const API_KEY = "AIzaSyAZ-yES2YmYiLlSCztEVP4mFO6vPFGdZTM"; // 🔥 ganti
-
+</style></head><body><div class="header">Nova Music</div><div class="search">
+<input type="text" id="search" placeholder="Search music..." oninput="debounceSearch()">
+</div><div class="grid" id="results"></div><div class="player" id="playerUI" style="display:none">
+  <img id="cover">
+  <div class="player-info">
+    <div class="player-title" id="title"></div>
+    <div class="player-artist" id="artist"></div>
+  </div>
+  <div class="controls">
+    <div class="btn" onclick="prev()">◀</div>
+    <div class="btn" id="playBtn" onclick="toggle()">▶</div>
+    <div class="btn" onclick="next()">▶▶</div>
+  </div>
+</div><iframe id="player"></iframe><script>
+const API_KEY = "AIzaSyAZ-yES2YmYiLlSCztEVP4mFO6vPFGdZTM";
 let timeout;
 let playlist=[];
 let current=0;
 let playing=false;
 
-/* PLAY */
-function play(id,title){
- playlist.push({id,title});
+function play(id,title,thumb,channel){
+ playlist.push({id,title,thumb,channel});
  current = playlist.length-1;
  load();
 }
 
-/* LOAD SONG */
 function load(){
  let s = playlist[current];
  document.getElementById("player").src =
  `https://www.youtube.com/embed/${s.id}?autoplay=1`;
- document.getElementById("nowPlaying").innerText = s.title;
+ document.getElementById("title").innerText = s.title;
+ document.getElementById("artist").innerText = s.channel;
+ document.getElementById("cover").src = s.thumb;
+ document.getElementById("playerUI").style.display = "flex";
+ document.getElementById("playBtn").innerText = "⏸";
  playing=true;
 }
 
-/* NEXT */
-function next(){
- if(current < playlist.length-1){
- current++;
- load();
- }
-}
+function next(){ if(current<playlist.length-1){current++;load();} }
+function prev(){ if(current>0){current--;load();} }
 
-/* PREV */
-function prev(){
- if(current > 0){
- current--;
- load();
- }
-}
-
-/* TOGGLE */
 function toggle(){
- let iframe = document.getElementById("player");
- if(playing){
- iframe.src="";
- playing=false;
- }else{
- load();
- }
+ let iframe=document.getElementById("player");
+ let btn=document.getElementById("playBtn");
+ if(playing){iframe.src="";btn.innerText="▶";playing=false;}
+ else{load();btn.innerText="⏸";}
 }
 
-/* SEARCH DELAY */
 function debounceSearch(){
  clearTimeout(timeout);
- timeout=setTimeout(searchYT,500);
+ timeout=setTimeout(searchYT,400);
 }
 
-/* SEARCH API */
 async function searchYT(){
- let q = document.getElementById("search").value;
+ let q=document.getElementById("search").value;
  if(q.length<2) return;
 
- document.getElementById("results").innerHTML =
- '<div class="loader">Searching...</div>';
+ document.getElementById("results").innerHTML="Searching...";
 
  try{
- let res = await fetch(
- `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=10&key=${API_KEY}`
- );
- let data = await res.json();
+ let res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=10&key=${API_KEY}`);
+ let data=await res.json();
 
  let html="";
-
  data.items.forEach(v=>{
- let id = v.id.videoId;
- let title = v.snippet.title.replace(/'/g,"");
- let thumb = v.snippet.thumbnails.medium.url;
- let channel = v.snippet.channelTitle;
+ let id=v.id.videoId;
+ let title=v.snippet.title.replace(/'/g,"");
+ let thumb=v.snippet.thumbnails.medium.url;
+ let channel=v.snippet.channelTitle;
 
  html+=`
- <div class="song" onclick="play('${id}','${title}')">
+ <div class="card" onclick="play('${id}','${title}','${thumb}','${channel}')">
    <img src="${thumb}">
    <div class="info">
      <div class="title">${title}</div>
      <div class="artist">${channel}</div>
    </div>
-   <div class="play">▶</div>
  </div>`;
  });
 
- document.getElementById("results").innerHTML = html;
+ document.getElementById("results").innerHTML=html;
 
  }catch(e){
- document.getElementById("results").innerHTML =
- '<div class="loader">Error loading 😢</div>';
+ document.getElementById("results").innerHTML="Error";
  }
 }
-</script>
-
-</body>
+</script></body>
 </html>
