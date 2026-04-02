@@ -1,172 +1,80 @@
 <!DOCTYPE html><html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spotify Max Clone</title><style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #121212;
-  color: white;
-}
+<title>Nova Music Pro</title><style>
+:root{--green:#1db954}
+body{margin:0;font-family:Arial;background:#121212;color:#fff}
 
-.header {
-  padding: 15px;
-  font-size: 22px;
-  font-weight: bold;
-}
+.header{display:flex;align-items:center;gap:10px;padding:15px;font-size:20px;font-weight:bold}
+.logo{width:36px;height:36px;border-radius:50%;background:linear-gradient(45deg,#1db954,#00ffc6);display:flex;align-items:center;justify-content:center;font-weight:bold}
 
-.search {
-  padding: 10px;
-}
+.search{padding:10px}
+.search input{width:100%;padding:12px;border-radius:25px;border:none;background:#1e1e1e;color:#fff}
 
-.search input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 25px;
-  border: none;
-  background: #1e1e1e;
-  color: white;
-}
+.section{padding:10px}
 
-.section {
-  padding: 15px;
-}
+.song{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:.2s}
+.song:hover{background:#1e1e1e}
+.song img{width:55px;height:55px;border-radius:8px}
+.song .info{flex:1}
+.song .title{font-size:14px}
+.song .artist{font-size:11px;color:#aaa}
+.song .play{color:var(--green);font-size:18px}
 
-.song {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
+.loader{padding:15px;text-align:center;color:#aaa}
 
-.song:hover {
-  background: #1e1e1e;
-}
+.player-bar{position:fixed;bottom:0;width:100%;background:#181818;padding:8px;border-top:1px solid #333}
+.player-info{font-size:12px;margin-bottom:5px}
+iframe{width:100%;height:70px;border:none;border-radius:10px}
 
-.song img {
-  width: 55px;
-  height: 55px;
-  border-radius: 6px;
-  margin-right: 10px;
-}
-
-.song-info {
-  flex: 1;
-}
-
-.song button {
-  background: none;
-  border: none;
-  color: #1db954;
-  font-size: 18px;
-}
-
-.album {
-  display: flex;
-  overflow-x: auto;
-  gap: 12px;
-}
-
-.album-item {
-  width: 130px;
-}
-
-.album-item img {
-  width: 100%;
-  border-radius: 10px;
-}
-
-.navbar {
-  position: fixed;
-  bottom: 80px;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  background: #000;
-  padding: 10px 0;
-}
-
-.navbar div {
-  text-align: center;
-  font-size: 12px;
-}
-
-.player {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #181818;
-  padding: 5px;
-}
-
-iframe {
-  border-radius: 10px;
-}
-
-</style></head><body><div class="header">🎧 Spotify Max</div><div class="search">
-  <input type="text" id="search" placeholder="Search songs..." onkeyup="searchSong()">
-</div><div class="section">
-  <h3>Recently Played</h3>  <div class="song" onclick="play('dQw4w9WgXcQ')">
-    <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg">
-    <div class="song-info">
-      <b>Never Gonna Give You Up</b><br>
-      <small>Rick Astley</small>
-    </div>
-    <button>▶</button>
-  </div>  <div class="song" onclick="play('3JZ_D3ELwOQ')">
-    <img src="https://img.youtube.com/vi/3JZ_D3ELwOQ/0.jpg">
-    <div class="song-info">
-      <b>See You Again</b><br>
-      <small>Wiz Khalifa</small>
-    </div>
-    <button>▶</button>
-  </div>  <div class="song" onclick="play('kJQP7kiw5Fk')">
-    <img src="https://img.youtube.com/vi/kJQP7kiw5Fk/0.jpg">
-    <div class="song-info">
-      <b>Despacito</b><br>
-      <small>Luis Fonsi</small>
-    </div>
-    <button>▶</button>
-  </div></div><div class="section">
-  <h3>Albums</h3>
-  <div class="album">
-    <div class="album-item" onclick="play('dQw4w9WgXcQ')"><img src="https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg"></div>
-    <div class="album-item" onclick="play('3JZ_D3ELwOQ')"><img src="https://img.youtube.com/vi/3JZ_D3ELwOQ/0.jpg"></div>
-    <div class="album-item" onclick="play('kJQP7kiw5Fk')"><img src="https://img.youtube.com/vi/kJQP7kiw5Fk/0.jpg"></div>
-  </div>
-</div><div class="navbar">
-  <div>🏠<br>Home</div>
-  <div>🔍<br>Search</div>
-  <div>📚<br>Library</div>
-</div><div class="player">
-  <iframe id="player" width="100%" height="70"
-  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-  allow="autoplay"></iframe>
+</style></head><body><div class="header">
+<div class="logo">N</div>
+Nova Music Pro
+</div><div class="search">
+<input type="text" id="search" placeholder="Search any song..." oninput="debounceSearch()">
+</div><div class="section" id="results"></div><div class="player-bar">
+<div class="player-info" id="nowPlaying">Not playing</div>
+<iframe id="player" src=""></iframe>
 </div><script>
-let playlist = ['dQw4w9WgXcQ','3JZ_D3ELwOQ','kJQP7kiw5Fk'];
-let current = 0;
+let timeout;
 
-function play(id){
-  current = playlist.indexOf(id);
-  document.getElementById("player").src =
-  "https://www.youtube.com/embed/" + id + "?autoplay=1";
+function play(id,title){
+ document.getElementById("player").src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+ document.getElementById("nowPlaying").innerText = "Now Playing: " + title;
 }
 
-function next(){
-  current++;
-  if(current >= playlist.length) current = 0;
-  play(playlist[current]);
+function debounceSearch(){
+ clearTimeout(timeout);
+ timeout = setTimeout(searchYT,500);
 }
 
-function searchSong(){
-  let input = document.getElementById("search").value.toLowerCase();
-  let songs = document.getElementsByClassName("song");
+async function searchYT(){
+ let q = document.getElementById("search").value;
+ if(q.length<2) return;
 
-  for(let i=0;i<songs.length;i++){
-    let text = songs[i].innerText.toLowerCase();
-    songs[i].style.display = text.includes(input) ? "flex" : "none";
-  }
+ document.getElementById("results").innerHTML = '<div class="loader">Searching...</div>';
+
+ try{
+ let res = await fetch(`https://ytsearch.vercel.app/api?q=${q}`);
+ let data = await res.json();
+
+ let html="";
+ data.slice(0,10).forEach(v=>{
+ html+=`
+ <div class="song" onclick="play('${v.videoId}', '${v.title.replace(/'/g,"")}')">
+ <img src="https://img.youtube.com/vi/${v.videoId}/0.jpg">
+ <div class="info">
+ <div class="title">${v.title}</div>
+ <div class="artist">YouTube</div>
+ </div>
+ <div class="play">▶</div>
+ </div>`;
+ });
+
+ document.getElementById("results").innerHTML = html;
+ }catch(e){
+ document.getElementById("results").innerHTML = '<div class="loader">Error loading</div>';
+ }
 }
 </script></body>
 </html>
