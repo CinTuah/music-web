@@ -1,18 +1,17 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nova Music Pro</title><style>
+<title>Nova Music Pro</title>
+
+<style>
 :root{--green:#1db954}
 body{margin:0;font-family:Arial;background:#121212;color:#fff}
-
 .header{display:flex;align-items:center;gap:10px;padding:15px;font-size:20px;font-weight:bold}
 .logo{width:36px;height:36px;border-radius:50%;background:linear-gradient(45deg,#1db954,#00ffc6);display:flex;align-items:center;justify-content:center;font-weight:bold}
-
 .search{padding:10px}
 .search input{width:100%;padding:12px;border-radius:25px;border:none;background:#1e1e1e;color:#fff}
-
 .section{padding:10px}
-
 .song{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:.2s}
 .song:hover{background:#1e1e1e}
 .song img{width:55px;height:55px;border-radius:8px}
@@ -20,27 +19,41 @@ body{margin:0;font-family:Arial;background:#121212;color:#fff}
 .song .title{font-size:14px}
 .song .artist{font-size:11px;color:#aaa}
 .song .play{color:var(--green);font-size:18px}
-
-.loader{padding:15px;text-align:center;color:#aaa}
-
+.loader{text-align:center;padding:15px;color:#aaa}
 .player-bar{position:fixed;bottom:0;width:100%;background:#181818;padding:8px;border-top:1px solid #333}
 .player-info{font-size:12px;margin-bottom:5px}
 iframe{width:100%;height:70px;border:none;border-radius:10px}
+</style>
+</head>
 
-</style></head><body><div class="header">
+<body>
+
+<div class="header">
 <div class="logo">N</div>
 Nova Music Pro
-</div><div class="search">
+</div>
+
+<div class="search">
 <input type="text" id="search" placeholder="Search any song..." oninput="debounceSearch()">
-</div><div class="section" id="results"></div><div class="player-bar">
+</div>
+
+<div class="section" id="results"></div>
+
+<div class="player-bar">
 <div class="player-info" id="nowPlaying">Not playing</div>
-<iframe id="player" src=""></iframe>
-</div><script>
+<iframe id="player"></iframe>
+</div>
+
+<script>
+const API_KEY = "ISI_API_KEY_KAMU"; // 🔥 GANTI INI
+
 let timeout;
 
 function play(id,title){
- document.getElementById("player").src = `https://www.youtube.com/embed/${id}?autoplay=1`;
- document.getElementById("nowPlaying").innerText = "Now Playing: " + title;
+ document.getElementById("player").src =
+ `https://www.youtube.com/embed/${id}?autoplay=1`;
+ document.getElementById("nowPlaying").innerText =
+ "Now Playing: " + title;
 }
 
 function debounceSearch(){
@@ -52,29 +65,43 @@ async function searchYT(){
  let q = document.getElementById("search").value;
  if(q.length<2) return;
 
- document.getElementById("results").innerHTML = '<div class="loader">Searching...</div>';
+ document.getElementById("results").innerHTML =
+ '<div class="loader">Searching...</div>';
 
  try{
- let res = await fetch(`https://ytsearch.vercel.app/api?q=${q}`);
+ let res = await fetch(
+ `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=10&key=${API_KEY}`
+ );
+
  let data = await res.json();
 
  let html="";
- data.slice(0,10).forEach(v=>{
+
+ data.items.forEach(v=>{
+ let id = v.id.videoId;
+ let title = v.snippet.title.replace(/'/g,"");
+ let thumb = v.snippet.thumbnails.medium.url;
+ let channel = v.snippet.channelTitle;
+
  html+=`
- <div class="song" onclick="play('${v.videoId}', '${v.title.replace(/'/g,"")}')">
- <img src="https://img.youtube.com/vi/${v.videoId}/0.jpg">
- <div class="info">
- <div class="title">${v.title}</div>
- <div class="artist">YouTube</div>
- </div>
- <div class="play">▶</div>
+ <div class="song" onclick="play('${id}','${title}')">
+   <img src="${thumb}">
+   <div class="info">
+     <div class="title">${title}</div>
+     <div class="artist">${channel}</div>
+   </div>
+   <div class="play">▶</div>
  </div>`;
  });
 
  document.getElementById("results").innerHTML = html;
+
  }catch(e){
- document.getElementById("results").innerHTML = '<div class="loader">Error loading</div>';
+ document.getElementById("results").innerHTML =
+ '<div class="loader">Error loading 😢</div>';
  }
 }
-</script></body>
+</script>
+
+</body>
 </html>
