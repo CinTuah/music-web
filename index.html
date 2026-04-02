@@ -1,120 +1,88 @@
 <!DOCTYPE html><html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nova Music Smooth</title>
+<title>Nova Music Stable</title>
 <script src="https://www.youtube.com/iframe_api"></script><style>
-:root{--green:#1db954;--bg:#0a0a0a;--card:#151515;--text:#fff;--sub:#9aa0a6}
+:root{--green:#1db954;--bg:#0a0a0a;--card:#181818;--text:#fff;--sub:#b3b3b3}
 *{box-sizing:border-box}
+body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--text)}
 
-body{
- margin:0;
- font-family:Inter,sans-serif;
- background:var(--bg);
- color:var(--text);
- opacity:0;
- transform:translateY(20px);
- animation:fadeIn 0.8s ease forwards;
-}
+.header{padding:16px;font-weight:700;font-size:18px}
 
-@keyframes fadeIn{
- to{opacity:1;transform:translateY(0)}
-}
+.search{padding:0 16px 10px}
+.search input{width:100%;padding:12px 16px;border-radius:999px;border:none;background:#222;color:#fff}
 
-.header{
- padding:16px 18px;
- font-size:18px;
- font-weight:700;
- animation:slideDown 0.6s ease;
-}
-
-@keyframes slideDown{
- from{opacity:0;transform:translateY(-20px)}
- to{opacity:1;transform:translateY(0)}
-}
-
-.search{
- padding:0 16px 12px;
- animation:fadeIn 1s ease;
-}
-.search input{
- width:100%;
- padding:12px 16px;
- border-radius:999px;
- border:none;
- background:#1f1f1f;
- color:#fff;
-}
-
-.section{margin-bottom:10px;animation:fadeIn 1.2s ease}
-.section-title{padding:0 16px 6px;font-size:13px;color:#aaa}
+.section{margin-bottom:12px}
+.section-title{padding:0 16px 6px;color:#aaa;font-size:13px}
 .row{display:flex;gap:12px;overflow-x:auto;padding:0 16px}
 
-.card{
- min-width:140px;
- background:var(--card);
- border-radius:16px;
- overflow:hidden;
- transform:scale(0.95);
- opacity:0;
- animation:cardIn 0.5s ease forwards;
-}
-
-.card:nth-child(1){animation-delay:0.1s}
-.card:nth-child(2){animation-delay:0.2s}
-.card:nth-child(3){animation-delay:0.3s}
-.card:nth-child(4){animation-delay:0.4s}
-
-@keyframes cardIn{
- to{transform:scale(1);opacity:1}
-}
-
+.card{min-width:140px;background:var(--card);border-radius:14px;overflow:hidden}
 .card img{width:100%;height:120px;object-fit:cover}
 .info{padding:8px}
 .title{font-size:12px}
 .artist{font-size:10px;color:var(--sub)}
 
+/* PLAYER FIXED */
 .player{
  position:fixed;
- bottom:12px;
+ bottom:10px;
  left:50%;
  transform:translateX(-50%);
- width:calc(100% - 24px);
- max-width:520px;
- background:rgba(20,20,20,0.75);
- backdrop-filter:blur(25px);
- border-radius:22px;
- padding:10px 12px;
+ width:calc(100% - 20px);
+ max-width:480px;
+ height:64px;
+ background:#181818;
+ border-radius:16px;
  display:flex;
  align-items:center;
+ padding:8px 10px;
  gap:10px;
- animation:playerUp 0.8s ease;
+ z-index:1000;
 }
 
-@keyframes playerUp{
- from{transform:translate(-50%,40px);opacity:0}
- to{transform:translate(-50%,0);opacity:1}
+.player img{width:44px;height:44px;border-radius:10px}
+
+.player-info{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ overflow:hidden;
 }
 
-.player img{width:48px;height:48px;border-radius:12px}
-.player-info{flex:1}
-.player-title{font-size:13px}
-.player-artist{font-size:11px;color:var(--sub)}
+.player-title{
+ font-size:13px;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
 
-.progress{height:3px;background:#333;border-radius:999px;overflow:hidden;margin-top:6px}
-.bar{height:100%;width:0;background:var(--green)}
+.player-artist{
+ font-size:11px;
+ color:var(--sub);
+}
 
-.time{display:flex;justify-content:space-between;font-size:9px;color:var(--sub)}
+.controls{display:flex;align-items:center;gap:6px}
 
-.controls{display:flex;gap:6px}
 .btn{display:flex;align-items:center;justify-content:center;border-radius:50%}
-.small{width:30px;height:30px;background:#2a2a2a}
-.main{width:44px;height:44px;background:var(--green)}
+.small{width:28px;height:28px;background:#2a2a2a}
+.main{width:40px;height:40px;background:var(--green)}
 
-.small.prev::before{content:'';border-right:8px solid white;border-top:5px solid transparent;border-bottom:5px solid transparent}
-.small.next::before{content:'';border-left:8px solid white;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.small.prev::before{content:'';border-right:7px solid white;border-top:4px solid transparent;border-bottom:4px solid transparent}
+.small.next::before{content:'';border-left:7px solid white;border-top:4px solid transparent;border-bottom:4px solid transparent}
 
-.main.play::before{content:'';border-left:12px solid black;border-top:7px solid transparent;border-bottom:7px solid transparent}
-.main.pause::before{content:'';width:5px;height:14px;background:black;box-shadow:8px 0 0 black}
+.main.play::before{content:'';border-left:11px solid black;border-top:6px solid transparent;border-bottom:6px solid transparent}
+.main.pause::before{content:'';width:4px;height:12px;background:black;box-shadow:7px 0 0 black}
+
+.progress{
+ position:absolute;
+ bottom:0;
+ left:0;
+ width:100%;
+ height:2px;
+ background:#333;
+}
+.bar{height:100%;width:0;background:var(--green)}
 
 #player{display:none}
 </style></head>
@@ -126,19 +94,15 @@ body{
 </div><div class="section">
 <div class="section-title">Search</div>
 <div class="row" id="results"></div>
-</div><div class="player" id="playerUI">
-<img id="cover">
-<div class="player-info">
+</div><div class="player" id="playerUI" style="display:none">
+<img id="cover"><div class="player-info">
 <div class="player-title" id="title"></div>
 <div class="player-artist" id="artist"></div>
-<div class="progress" onclick="seek(event)"><div class="bar" id="bar"></div></div>
-<div class="time"><span id="current">0:00</span><span id="duration">0:00</span></div>
-</div>
-<div class="controls">
+</div><div class="controls">
 <div class="btn small prev" onclick="prev()"></div>
 <div class="btn main play" id="playBtn" onclick="toggle()"></div>
 <div class="btn small next" onclick="next()"></div>
-</div>
+</div><div class="progress"><div class="bar" id="bar"></div></div>
 </div><div id="player"></div><script>
 const API_KEY="AIzaSyAZ-yES2YmYiLlSCztEVP4mFO6vPFGdZTM";
 let player,playlist=[],current=0,playing=false,interval;
@@ -162,10 +126,11 @@ function play(id,t,th,ch){
 function load(){
  let s=playlist[current];
  player.loadVideoById(s.id);
- document.getElementById('title').innerText=s.t;
- document.getElementById('artist').innerText=s.ch;
- document.getElementById('cover').src=s.th;
- document.getElementById('playBtn').className='btn main pause';
+ title.innerText=s.t;
+ artist.innerText=s.ch;
+ cover.src=s.th;
+ playerUI.style.display='flex';
+ playBtn.className='btn main pause';
  playing=true;
  startProgress();
 }
@@ -185,17 +150,8 @@ function startProgress(){
  let c=player.getCurrentTime();
  let d=player.getDuration();
  if(!d)return;
- document.getElementById('bar').style.width=(c/d)*100+'%';
- let f=t=>Math.floor(t/60)+":"+(Math.floor(t%60)<10?'0':'')+Math.floor(t%60);
- document.getElementById('current').innerText=f(c);
- document.getElementById('duration').innerText=f(d);
+ bar.style.width=(c/d)*100+'%';
  },500);
-}
-
-function seek(e){
- let r=e.currentTarget.getBoundingClientRect();
- let p=(e.clientX-r.left)/r.width;
- player.seekTo(player.getDuration()*p,true);
 }
 
 function loadRecent(){
@@ -203,14 +159,14 @@ function loadRecent(){
  recentList.forEach(v=>{
  html+=`<div class='card' onclick="play('${v.id}','${v.t}','${v.th}','${v.ch}')"><img src='${v.th}'><div class='info'><div class='title'>${v.t}</div><div class='artist'>${v.ch}</div></div></div>`;
  });
- document.getElementById('recent').innerHTML=html;
+ recent.innerHTML=html;
 }
 
 let timeout;
 function debounceSearch(){clearTimeout(timeout);timeout=setTimeout(searchYT,400)}
 
 async function searchYT(){
- let q=document.getElementById('search').value;
+ let q=search.value;
  if(q.length<2)return;
  results.innerHTML='Loading...';
  let r=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&maxResults=10&key=${API_KEY}`);
