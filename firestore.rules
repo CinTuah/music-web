@@ -1,0 +1,15 @@
+// Firestore Security Rules
+// Cara pakai: Firebase Console -> Firestore Database -> tab "Rules" -> ganti isinya dengan ini -> Publish
+//
+// Aturan ini memastikan setiap user HANYA bisa membaca/menulis dokumen datanya sendiri
+// (uid harus cocok dengan uid akun Google yang sedang login). User lain tidak bisa
+// mengakses data siapa pun selain dirinya sendiri, bahkan lewat DevTools sekalipun.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
